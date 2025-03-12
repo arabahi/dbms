@@ -1,0 +1,263 @@
+-- 1. Create Bank Table
+CREATE TABLE Bank (
+    bk_code INT PRIMARY KEY,
+    bk_name VARCHAR(100),
+    bk_address VARCHAR(255)
+);
+
+-- 2. Create Branch Table
+CREATE TABLE Branch (
+    br_id INT PRIMARY KEY,
+    br_name VARCHAR(100),
+    br_address VARCHAR(255),
+    bk_code INT,
+    FOREIGN KEY (bk_code) REFERENCES Bank(bk_code)
+);
+
+-- 3. Create Customer Table
+CREATE TABLE Customer (
+    cust_ID INT PRIMARY KEY,
+    cust_name VARCHAR(100),
+    phone_no VARCHAR(15),
+    address VARCHAR(255),
+    nominee VARCHAR(50)
+);
+
+-- 4. Create Account Table
+CREATE TABLE Account (
+    acc_no INT PRIMARY KEY,
+    acc_type VARCHAR(50),
+    balance DECIMAL(10,2),
+    br_id INT,
+    FOREIGN KEY (br_id) REFERENCES Branch(br_id)
+);
+
+-- 5. Create Customer_Account Table (Many-to-Many Relationship)
+CREATE TABLE Customer_Account (
+    cust_ID INT,
+    acc_no INT,
+    PRIMARY KEY (cust_ID, acc_no),
+    FOREIGN KEY (cust_ID) REFERENCES Customer(cust_ID),
+    FOREIGN KEY (acc_no) REFERENCES Account(acc_no)
+);
+
+-- 6. Create Loan Table
+CREATE TABLE Loan (
+    loan_ID INT PRIMARY KEY,
+    loan_type VARCHAR(50),
+    amount DECIMAL(10,2),
+    br_id INT,
+    FOREIGN KEY (br_id) REFERENCES Branch(br_id)
+);
+
+-- 7. Create Customer_Loan Table (Many-to-Many Relationship)
+CREATE TABLE Customer_Loan (
+    cust_ID INT,
+    loan_ID INT,
+    PRIMARY KEY (cust_ID, loan_ID),
+    FOREIGN KEY (cust_ID) REFERENCES Customer(cust_ID),
+    FOREIGN KEY (loan_ID) REFERENCES Loan(loan_ID)
+);
+
+
+
+
+-- Insert records into Bank Table
+INSERT INTO Bank VALUES (1, 'State Bank', 'Mumbai');
+INSERT INTO Bank VALUES (2, 'ICICI Bank', 'Delhi');
+INSERT INTO Bank VALUES (3, 'HDFC Bank', 'Bangalore');
+
+-- Insert records into Branch Table
+INSERT INTO Branch VALUES (101, 'Br_01', 'Mumbai Branch', 1);
+INSERT INTO Branch VALUES (102, 'Br_02', 'Delhi Branch', 2);
+INSERT INTO Branch VALUES (103, 'Br_03', 'Bangalore Branch', 3);
+
+-- Insert records into Customer Table
+INSERT INTO Customer VALUES (101, 'Ravi', '9876543210', 'Surathkal', 'Anjali');
+INSERT INTO Customer VALUES (102, 'Sita', '9654321098', 'NITK', 'Mohan');
+INSERT INTO Customer VALUES (103, 'Arun', '9123456789', 'MG Road', 'Neha');
+INSERT INTO Customer VALUES (104, 'Maya', '9123456700', 'Br_02', 'Ravi');
+INSERT INTO Customer VALUES (105, 'Shyam', '9998887776', 'Surathkal', 'Maya');
+
+-- Insert records into Account Table
+INSERT INTO Account VALUES (201, 'Savings', 15000.00, 101);
+INSERT INTO Account VALUES (202, 'Current', 5000.00, 102);
+INSERT INTO Account VALUES (203, 'Savings', 25000.00, 103);
+INSERT INTO Account VALUES (204, 'Current', 200.00, 102);
+INSERT INTO Account VALUES (205, 'Savings', 12000.00, 103);
+
+-- Insert records into Customer_Account Table
+INSERT INTO Customer_Account VALUES (101, 201);
+INSERT INTO Customer_Account VALUES (102, 202);
+INSERT INTO Customer_Account VALUES (103, 203);
+INSERT INTO Customer_Account VALUES (104, 204);
+INSERT INTO Customer_Account VALUES (105, 205);
+
+-- Insert records into Loan Table
+INSERT INTO Loan VALUES (301, 'Home Loan', 500000.00, 101);
+INSERT INTO Loan VALUES (302, 'Vehicle Loan', 100000.00, 102);
+INSERT INTO Loan VALUES (303, 'Home Loan', 200000.00, 103);
+INSERT INTO Loan VALUES (304, 'Personal Loan', 50000.00, 101);
+INSERT INTO Loan VALUES (305, 'Vehicle Loan', 150000.00, 103);
+
+-- Insert records into Customer_Loan Table
+INSERT INTO Customer_Loan VALUES (101, 301);
+INSERT INTO Customer_Loan VALUES (102, 302);
+INSERT INTO Customer_Loan VALUES (103, 303);
+INSERT INTO Customer_Loan VALUES (104, 304);
+INSERT INTO Customer_Loan VALUES (105, 305);
+
+
+
+-- 3. List the details of all customers.
+SELECT * FROM Customer;
+
+-- 4. Find the cust_ID and phone number of customer ‘Ravi’.
+SELECT cust_ID, phone_no FROM Customer WHERE cust_name = 'Ravi';
+
+-- 5. Find the Address of all branches of br_01.
+SELECT br_address FROM Branch WHERE br_id = 101;
+
+-- 6. Find the details of Customer having ID 103.
+SELECT * FROM Customer WHERE cust_ID = 103;
+
+-- 7. List the account details having balance more than 10000.
+SELECT * FROM Account WHERE balance > 10000;
+
+-- 8. List the account details of branch br_02.
+SELECT * FROM Account WHERE br_id = 102;
+
+-- 9. List the loan details of branch br_01.
+SELECT * FROM Loan WHERE br_id = 101;
+
+-- 10. List the account details with their branch address.
+SELECT Account.*, Branch.br_address
+FROM Account
+JOIN Branch ON Account.br_id = Branch.br_id;
+
+-- 11. List the customer details with their account details.
+SELECT Customer.*, Account.*
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no;
+
+-- 12. List the customer details having account type ‘savings’.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no
+WHERE Account.acc_type = 'Savings';
+
+-- 13. List the customer details having vehicle loan.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Loan ON Customer.cust_ID = Customer_Loan.cust_ID
+JOIN Loan ON Customer_Loan.loan_ID = Loan.loan_ID
+WHERE Loan.loan_type = 'Vehicle Loan';
+
+-- 14. List the branch names of all accounts.
+SELECT DISTINCT Branch.br_name
+FROM Branch
+JOIN Account ON Branch.br_id = Account.br_id;
+
+-- 15. List the customer details going to ‘Surathkal’ branch.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no
+JOIN Branch ON Account.br_id = Branch.br_id
+WHERE Branch.br_address = 'Surathkal';
+
+-- 16. List the customers having loan account in ‘MG Road’ branch.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Loan ON Customer.cust_ID = Customer_Loan.cust_ID
+JOIN Loan ON Customer_Loan.loan_ID = Loan.loan_ID
+JOIN Branch ON Loan.br_id = Branch.br_id
+WHERE Branch.br_address = 'MG Road';
+
+-- 17. Find the customers having balance between 1000 to 10000.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no
+WHERE Account.balance BETWEEN 1000 AND 10000;
+
+-- 18. Give a bonus of rupees 100 to customers having more than 10000 balance.
+UPDATE Account
+SET balance = balance + 100
+WHERE balance > 10000;
+
+-- 19. Deduct 50 rupees from customers having less than 500 rupees in balance.
+UPDATE Account
+SET balance = balance - 50
+WHERE balance < 500;
+
+-- 20. Give the customer details having home loan.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Loan ON Customer.cust_ID = Customer_Loan.cust_ID
+JOIN Loan ON Customer_Loan.loan_ID = Loan.loan_ID
+WHERE Loan.loan_type = 'Home Loan';
+
+-- 21. Give the customer details having home loan in ‘NITK’ branch.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Loan ON Customer.cust_ID = Customer_Loan.cust_ID
+JOIN Loan ON Customer_Loan.loan_ID = Loan.loan_ID
+JOIN Branch ON Loan.br_id = Branch.br_id
+WHERE Loan.loan_type = 'Home Loan' AND Branch.br_address = 'NITK';
+
+-- 22. Add a column NOMINEE to the customer table with data type varchar (50).
+ALTER TABLE Customer ADD nominee VARCHAR(50);
+
+-- 23. List all the account numbers in ascending order of their balance.
+SELECT acc_no FROM Account ORDER BY balance ASC;
+
+-- 24. Count the number of customers having account type savings.
+SELECT COUNT(DISTINCT Customer.cust_ID) AS Savings_Account_Customers
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no
+WHERE Account.acc_type = 'Savings';
+
+-- 25. Count the number of customers for each account type.
+SELECT Account.acc_type, COUNT(DISTINCT Customer.cust_ID) AS Customers_Count
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no
+GROUP BY Account.acc_type;
+
+-- 26. Find the total balance in Savings account.
+SELECT SUM(balance) AS Total_Savings_Balance
+FROM Account
+WHERE acc_type = 'Savings';
+
+-- 27. Find the average balance of Current account.
+SELECT AVG(balance) AS Average_Current_Balance
+FROM Account
+WHERE acc_type = 'Current';
+
+-- 28. Find the average balance for each account type.
+SELECT acc_type, AVG(balance) AS Average_Balance
+FROM Account
+GROUP BY acc_type;
+
+-- 29. Find the customer details having maximum balance.
+SELECT Customer.*
+FROM Customer
+JOIN Customer_Account ON Customer.cust_ID = Customer_Account.cust_ID
+JOIN Account ON Customer_Account.acc_no = Account.acc_no
+WHERE Account.balance = (SELECT MAX(balance) FROM Account);
+
+-- 30. Find the average amount for vehicle loan.
+SELECT AVG(amount) AS Average_Vehicle_Loan
+FROM Loan
+WHERE loan_type = 'Vehicle Loan';
+
+-- 31. Find the average balance in each branch.
+SELECT Branch.br_name, AVG(Account.balance) AS Average_Balance
+FROM Branch
+JOIN Account ON Branch.br_id = Account.br_id
+GROUP BY Branch.br_name;
+
