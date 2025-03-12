@@ -1,39 +1,39 @@
 -- 1. Create Bank Table
-CREATE TABLE Bank (
+CREATE TABLE bank (
     bk_code INT PRIMARY KEY,
     bk_name VARCHAR(100),
     bk_address VARCHAR(255)
 );
 
 -- 2. Create Branch Table
-CREATE TABLE Branch (
-    br_id INT PRIMARY KEY,
+CREATE TABLE branch (
+    br_id VARCHAR(5) PRIMARY KEY,
     br_name VARCHAR(100),
     br_address VARCHAR(255),
     bk_code INT,
-    FOREIGN KEY (bk_code) REFERENCES Bank(bk_code)
+    FOREIGN KEY (bk_code) REFERENCES bank(bk_code)
 );
 
 -- 3. Create Customer Table
-CREATE TABLE Customer (
-    cust_ID INT PRIMARY KEY,
+CREATE TABLE customer (
+    cust_id INT PRIMARY KEY,
     cust_name VARCHAR(100),
-    phone_no VARCHAR(15),
+    phone_no VARCHAR(10),
     address VARCHAR(255),
     nominee VARCHAR(50)
 );
 
 -- 4. Create Account Table
-CREATE TABLE Account (
+CREATE TABLE account (
     acc_no INT PRIMARY KEY,
     acc_type VARCHAR(50),
     balance DECIMAL(10,2),
-    br_id INT,
+    br_id VARCHAR(5),
     FOREIGN KEY (br_id) REFERENCES Branch(br_id)
 );
 
 -- 5. Create Customer_Account Table (Many-to-Many Relationship)
-CREATE TABLE Customer_Account (
+CREATE TABLE customer_account (
     cust_ID INT,
     acc_no INT,
     PRIMARY KEY (cust_ID, acc_no),
@@ -42,12 +42,12 @@ CREATE TABLE Customer_Account (
 );
 
 -- 6. Create Loan Table
-CREATE TABLE Loan (
+CREATE TABLE loan (
     loan_ID INT PRIMARY KEY,
     loan_type VARCHAR(50),
     amount DECIMAL(10,2),
-    br_id INT,
-    FOREIGN KEY (br_id) REFERENCES Branch(br_id)
+    br_id VARCHAR(5),
+    FOREIGN KEY (br_id) REFERENCES branch(br_id)
 );
 
 -- 7. Create Customer_Loan Table (Many-to-Many Relationship)
