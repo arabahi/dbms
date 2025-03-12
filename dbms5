@@ -66,11 +66,15 @@ CREATE TABLE Customer_Loan (
 INSERT INTO Bank VALUES (1, 'State Bank', 'Mumbai');
 INSERT INTO Bank VALUES (2, 'ICICI Bank', 'Delhi');
 INSERT INTO Bank VALUES (3, 'HDFC Bank', 'Bangalore');
+INSERT INTO Bank VALUES (4, 'Kotak Mahindra Bank', 'Delhi');
+INSERT INTO Bank VALUES (5, 'Axis Bank', 'Lucknow');
 
 -- Insert records into Branch Table
-INSERT INTO Branch VALUES (101, 'Br_01', 'Mumbai Branch', 1);
-INSERT INTO Branch VALUES (102, 'Br_02', 'Delhi Branch', 2);
-INSERT INTO Branch VALUES (103, 'Br_03', 'Bangalore Branch', 3);
+INSERT INTO Branch VALUES ('br_01', 'Mumbai Branch', 'Thane, Mumbai', 1);
+INSERT INTO Branch VALUES ('br_02', 'Delhi Branch', 'Sector-24, Delhi', 2);
+INSERT INTO Branch VALUES ('br_03', 'Bangalore Branch', 'Malleshwaram, Bangalore', 3);
+INSERT INTO Branch VALUES ('br_04', 'Delhi-2 Branch', 'Uttam Nagar, Delhi', 2);
+INSERT INTO Branch VALUES ('br_05', 'Lucknow Branch', 'Lucknow', 5);
 
 -- Insert records into Customer Table
 INSERT INTO Customer VALUES (101, 'Ravi', '9876543210', 'Surathkal', 'Anjali');
@@ -80,11 +84,11 @@ INSERT INTO Customer VALUES (104, 'Maya', '9123456700', 'Br_02', 'Ravi');
 INSERT INTO Customer VALUES (105, 'Shyam', '9998887776', 'Surathkal', 'Maya');
 
 -- Insert records into Account Table
-INSERT INTO Account VALUES (201, 'Savings', 15000.00, 101);
-INSERT INTO Account VALUES (202, 'Current', 5000.00, 102);
-INSERT INTO Account VALUES (203, 'Savings', 25000.00, 103);
-INSERT INTO Account VALUES (204, 'Current', 200.00, 102);
-INSERT INTO Account VALUES (205, 'Savings', 12000.00, 103);
+INSERT INTO Account VALUES (201, 'Savings', 15000.00, 'br_01');
+INSERT INTO Account VALUES (202, 'Current', 5000.00, 'br_03');
+INSERT INTO Account VALUES (203, 'Savings', 25000.00, 'br_02');
+INSERT INTO Account VALUES (204, 'Current', 200.00, 'br_01');
+INSERT INTO Account VALUES (205, 'Savings', 12000.00, 'br_02');
 
 -- Insert records into Customer_Account Table
 INSERT INTO Customer_Account VALUES (101, 201);
@@ -94,11 +98,11 @@ INSERT INTO Customer_Account VALUES (104, 204);
 INSERT INTO Customer_Account VALUES (105, 205);
 
 -- Insert records into Loan Table
-INSERT INTO Loan VALUES (301, 'Home Loan', 500000.00, 101);
-INSERT INTO Loan VALUES (302, 'Vehicle Loan', 100000.00, 102);
-INSERT INTO Loan VALUES (303, 'Home Loan', 200000.00, 103);
-INSERT INTO Loan VALUES (304, 'Personal Loan', 50000.00, 101);
-INSERT INTO Loan VALUES (305, 'Vehicle Loan', 150000.00, 103);
+INSERT INTO Loan VALUES (301, 'Home Loan', 500000.00, 'br_01');
+INSERT INTO Loan VALUES (302, 'Vehicle Loan', 100000.00, 'br_03');
+INSERT INTO Loan VALUES (303, 'Home Loan', 200000.00, 'br_02');
+INSERT INTO Loan VALUES (304, 'Personal Loan', 50000.00, 'br_02');
+INSERT INTO Loan VALUES (305, 'Vehicle Loan', 150000.00, 'br_01');
 
 -- Insert records into Customer_Loan Table
 INSERT INTO Customer_Loan VALUES (101, 301);
@@ -260,4 +264,3 @@ SELECT Branch.br_name, AVG(Account.balance) AS Average_Balance
 FROM Branch
 JOIN Account ON Branch.br_id = Account.br_id
 GROUP BY Branch.br_name;
-
